@@ -8,7 +8,7 @@ Alat untuk membuat QR code artistik yang gambarnya **terbentuk dari titik-titik 
 | `photo_qr.py` | Foto berwarna, isi apa saja **termasuk QRIS** | Foto utuh, hanya titik tengah tiap modul yang terang-gelapnya digeser seperlunya (kamuflase) | Tidak diubah sama sekali |
 | `check.py` | Semua hasil | Uji decode galeri + simulasi kamera HP dengan ZXing dan WeChat | |
 
-Contoh hasil `logo_qr.py`: [`examples/logo-qart-qilo-one.png`](examples/logo-qart-qilo-one.png) (warna logo asli) dan [`examples/logo-qart-kosewa-warna.png`](examples/logo-qart-kosewa-warna.png) (warna diganti lewat `--palette`).
+Contoh hasil `logo_qr.py` ada di folder [`examples/`](examples/): Qilo One (warna logo asli), kosewa, QiloBite, QiloWash, Jastify, dan Sinara (warna diganti lewat `--palette` supaya cukup gelap untuk pemindai).
 
 ## Instalasi
 
