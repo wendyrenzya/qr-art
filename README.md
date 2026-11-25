@@ -68,7 +68,7 @@ Parameter yang bisa diubah: `--alpha` (kontras titik terhadap sekitar, default 8
 
 ## Histori pendekatan dan alasan keputusan
 
-Proyek ini dimulai dari permintaan: QR dengan logo Qilo One "seperti contoh QR Pizza Hut / Starbucks / KFC", yaitu gambar yang tersusun dari titik QR, bukan logo yang ditempel. Lalu dikembangkan ke QRIS dengan foto. Urutannya:
+Proyek ini dimulai dari pembuatan QR dengan logo Qilo One "seperti contoh QR Pizza Hut / Starbucks / KFC", yaitu gambar yang tersusun dari titik QR, bukan logo yang ditempel. Lalu dikembangkan ke QRIS dengan foto. Urutannya:
 
 1. **Logo ditempel di tengah** (mengandalkan koreksi error level H). Terbaca, tapi bukan yang dimaksud. **Ditolak.**
 2. **Logo samar di belakang titik (overlay)**, lalu **halftone 3x3 dengan titik tambahan**. Masih terasa seperti gambar ditumpuk, bukan terbentuk dari titik. **Ditolak.**
