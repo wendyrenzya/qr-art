@@ -19,6 +19,8 @@ ap.add_argument("--logo", required=True, help="gambar logo (PNG transparan atau 
 ap.add_argument("--out", required=True, help="file PNG hasil (isi QR lengkap disimpan di <out>.txt)")
 ap.add_argument("--version", type=int, default=18, help="versi QR; 18 cukup untuk logo + tulisan, 12 untuk simbol saja")
 ap.add_argument("--ec", default="L", choices="LM")
+ap.add_argument("--palette", help='warna pengganti warna logo, mis. "#1f4fd1,#c8102e"; tiap bagian logo memakai warna palet dengan hue terdekat')
+ap.add_argument("--bg-color", default="#0f1f3a", help="warna titik QR di luar logo (default navy)")
 a = ap.parse_args()
 PREFIX, VERSION, OUT, LOGO = a.prefix, a.version, a.out, a.logo
 LEVEL = {"L": ERROR_CORRECT_L, "M": ERROR_CORRECT_M}[a.ec]
@@ -251,7 +253,17 @@ match = sum(1 for (r, c) in order[:L] if m[r][c] == ink[r][c])
 print(f"v{VERSION} n={n} bebas={NFREE} mask={MASK} cocok={match}/{L} ({100*match/L:.0f}%)")
 
 # ---------- render
-NAVY = (15, 31, 58); EYE = (0, 85, 215); BG = NAVY
+import colorsys
+
+NAVY = (15, 31, 58); EYE = (0, 85, 215)
+hexrgb = lambda h: tuple(int(h.strip().lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+lumof = lambda c: 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+BG = hexrgb(a.bg_color)
+PALETTE = [hexrgb(x) for x in a.palette.split(",")] if a.palette else []
+for col in PALETTE + [BG]:
+    if lumof(col) > 110:
+        print(f"PERINGATAN: warna {col} terlalu terang (luminansi {lumof(col):.0f} > 110); pemindai bisa gagal")
+hue = lambda c: colorsys.rgb_to_hsv(*(v / 255 for v in c))[0]
 P, B = 20, 4
 W = (n + 2 * B) * P
 img = Image.new("RGB", (W, W), "white")
@@ -266,6 +278,9 @@ def color_at(r, c):
     R, Gc, Bc = mod.getpixel((c, r))
     if min(R, Gc, Bc) > 230:
         return BG
+    if PALETTE:
+        h0 = hue((R, Gc, Bc))
+        return min(PALETTE, key=lambda p: min(abs(hue(p) - h0), 1 - abs(hue(p) - h0)))
     lum = 0.299 * R + 0.587 * Gc + 0.114 * Bc
     k = min(1.0, 95 / max(lum, 1))
     return (int(R * k), int(Gc * k), int(Bc * k))

@@ -8,7 +8,7 @@ Alat untuk membuat QR code artistik yang gambarnya **terbentuk dari titik-titik 
 | `photo_qr.py` | Foto berwarna, isi apa saja **termasuk QRIS** | Foto utuh, hanya titik tengah tiap modul yang terang-gelapnya digeser seperlunya (kamuflase) | Tidak diubah sama sekali |
 | `check.py` | Semua hasil | Uji decode galeri + simulasi kamera HP dengan ZXing dan WeChat | |
 
-Contoh hasil `logo_qr.py`: [`examples/logo-qart-qilo-one.png`](examples/logo-qart-qilo-one.png)
+Contoh hasil `logo_qr.py`: [`examples/logo-qart-qilo-one.png`](examples/logo-qart-qilo-one.png) (warna logo asli) dan [`examples/logo-qart-kosewa-warna.png`](examples/logo-qart-kosewa-warna.png) (warna diganti lewat `--palette`).
 
 ## Instalasi
 
@@ -31,6 +31,26 @@ python3 check.py qr-logo.png --data-file qr-logo.png.txt
 - Isi QR yang sebenarnya disimpan di `qr-logo.png.txt`: URL diikuti deretan angka panjang setelah `#`. Browser mengabaikan bagian setelah `#`, jadi yang terbuka tetap URL-nya.
 - Logo terbaik: kontras tinggi, bentuk sederhana, latar transparan/putih.
 - Level koreksi error L, jadi cetak minimal sekitar 4 cm.
+
+#### Mengatur warna logo (`--palette`, `--bg-color`)
+
+Secara default warna titik diambil dari warna logo, lalu digelapkan seperlunya supaya tetap terbaca, dan titik di luar logo berwarna navy. Masalahnya, logo yang warnanya sudah gelap (mis. navy `#0a2146`) jadi hampir hitam dan menyatu dengan titik QR di sekitarnya, sehingga logo tidak menonjol. Untuk itu ada dua opsi:
+
+```bash
+python3 logo_qr.py --prefix "https://kosewa.com/#" --logo logo-kosewa.png --out qr-kosewa.png \
+  --version 18 --palette "#1f4fd1,#c8102e" --bg-color "#343842"
+```
+
+- `--palette`: daftar warna pengganti, dipisah koma. Tiap bagian logo memakai warna palet yang hue-nya paling dekat dengan warna aslinya (contoh di atas: navy diganti biru cerah, merah marun diganti merah cerah). Bagian logo yang hampir tak berwarna (hitam/abu) ikut dicocokkan ke hue terdekat, jadi untuk logo hitam cukup beri satu warna.
+- `--bg-color`: warna titik QR di luar logo. Pilih warna netral (abu gelap) yang berbeda dari warna logo, supaya logo terlihat sebagai bentuk tersendiri.
+
+**Aturan memilih warna:**
+
+- Titik QR adalah modul "gelap", jadi semua warna palet dan `--bg-color` harus cukup gelap dibanding latar putih. Patokannya luminansi `0.299R + 0.587G + 0.114B` **maksimal sekitar 100** (skrip memberi PERINGATAN di atas 110).
+- Contoh aman: biru `#1f4fd1` (±79), merah `#c8102e` (±74), hijau `#1b7f3a` (±89), ungu `#6b2fb3` (±80), abu `#343842` (±56).
+- Hindari kuning, oranye terang, hijau muda, pink, dan pastel: luminansinya terlalu tinggi, pemindai melihatnya sebagai "putih".
+- Penanda sudut tetap navy dengan titik biru, supaya selalu kontras.
+- Setelah ganti warna, selalu jalankan `check.py`. Untuk contoh kosewa di atas: galeri 15/15 (ZXing dan WeChat), simulasi kamera ZXing 33/36 dan WeChat 30/36, setara versi warna asli (32/36 dan 31/36).
 
 ### 2. QR foto (termasuk QRIS)
 
@@ -90,6 +110,7 @@ Proyek ini dimulai dari pembuatan QR dengan logo Qilo One "seperti contoh QR Piz
 12. **Gaya titik penuh (dot-matrix/LED)** dicoba agar titik data bersembunyi di antara titik hiasan. Terbaca 36/36 bahkan tanpa cincin alignment, tapi gambarnya rusak dan sulit dikenali. **Ditinggalkan.**
 13. **Penanda sudut bulat** dan potongan foto melingkar di sekitarnya, sudut kanan-bawah membulat. Keterbacaan tetap (kamera 33/36 ZXing, 34/36 WeChat).
 14. **Penempatan foto:** posisi cincin alignment tetap, jadi foto yang digeser/diperbesar (`--crop`) supaya wajah berada di celah antar cincin.
+15. **Warna logo yang lebih mencolok (`--palette`).** Pada QR logo kosewa, tangan navy terlihat hampir hitam dan menyatu dengan titik QR di luar logo. Penyebabnya: warna asli sudah sangat gelap, lalu masih digelapkan lagi, dan titik di luar logo juga navy. Pemindai hanya butuh titik yang cukup gelap dibanding putih, bukan hitam, jadi warna logo bisa diganti versi yang lebih cerah (biru `#1f4fd1`, merah `#c8102e`) dan titik di luar logo dibuat abu netral. Keterbacaan tetap setara. Konsekuensinya, warna tidak lagi sama persis dengan logo resmi.
 
 ## Batasan dan catatan
 
